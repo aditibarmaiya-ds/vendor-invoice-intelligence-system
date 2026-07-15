@@ -1,0 +1,115 @@
+# ========================
+# Python
+# ========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+
+# ========================
+# Virtual Environment
+# ========================
+venv/
+.venv/
+env/
+ENV/
+.env
+
+# ========================
+# Jupyter Notebooks
+# ========================
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# ========================
+# Data Files (large raw files)
+# ========================
+data/raw/*.csv
+data/raw/*.db
+data/processed/*.csv
+
+# Keep processed folder tracked (but not its contents)
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# ========================
+# Database Files
+# ========================
+*.db
+*.sqlite
+*.sqlite3
+
+# ========================
+# Environment Variables
+# ========================
+.env
+.env.*
+*.env
+
+# ========================
+# IDE / Editor
+# ========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ========================
+# OS Files
+# ========================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# ========================
+# Logs & Temp Files
+# ========================
+*.log
+*.tmp
+*.temp
+logs/
+tmp/
+
+# ========================
+# Model Artifacts (if large)
+# ========================
+models/*.pkl
+models/*.joblib
+models/*.h5
+models/*.pt
+models/*.bin
+
+# ========================
+# Coverage & Testing
+# ========================
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# ========================
+# Distribution / Packaging
+# ========================
+*.manifest
+*.spec
