@@ -121,6 +121,18 @@ Kilbeggan Irish Whiskey) recurs across brand profitability, dead stock, and marg
 $3.46M in dead stock value is concentrated in high-price, low-volume items, while 178 products
 show zero recorded sales despite real purchase cost.
 
+### `04_feature_engineering.ipynb`
+Builds five reusable features on top of the cleaned data:
+- **Time-based features**: Month and Quarter extracted from sales dates to make seasonality explicit
+- **PaymentDelayDays**: Days between invoice and payment (avg. ~35 days, tightly consistent)
+- **FreightRatio**: Freight as a % of invoice value — surfaces small, proportionally expensive
+  orders independent of the Approval_Flag (which reflects absolute invoice size instead)
+- **IsPremiumSlowMoving**: A validated, data-driven flag (75th percentile price + 25th percentile
+  sales quantity) identifying the premium/low-volume segment recurring throughout EDA — flagged
+  products average -$303 GrossProfit vs. +$13,489 for the rest of the catalog
+- **MarginCategory**: Bucketed ProfitMargin (Negative / Low / Medium / High / No Sales) — reveals
+  that ~20% of the catalog is either losing money or has zero recorded sales
+
 ---
 
 
@@ -170,7 +182,7 @@ jupyter notebook
 - [x] **Phase 1 — Data Understanding**: Full schema, dtype, null, and shape profiling across all 7 datasets
 - [x] **Phase 2 — Data Cleaning**: Type fixes, missing value resolution, outlier review, standardization, loaded into SQLite
 - [x] **Phase 3 — Exploratory Data Analysis**: 10-section analysis covering profitability, dead stock, seasonality, pricing, and correlations
-- [ ] **Phase 4 — Feature Engineering**
+- [x] **Phase 4 — Feature Engineering**: Time features, payment delay, freight ratio, validated premium/slow-moving flag, margin categories
 - [ ] **Phase 5 — Business KPI Creation**
 - [ ] **Phase 6 — Machine Learning Models** (Sales Prediction, Inventory Forecasting, Vendor Performance, Invoice Risk Detection)
 - [ ] **Phase 7 — Streamlit Dashboard**
@@ -181,4 +193,3 @@ jupyter notebook
 ## 👤 Author
 
 **Aditi Barmaiya**
-Data Analyst | [LinkedIn](#) | [GitHub](#)
