@@ -4,6 +4,21 @@ A data analysis and intelligence system for processing, cleaning, and analyzing 
 
 ---
 
+## Why this project
+
+Businesses that purchase from multiple vendors and sell across multiple stores generate large volumes of transactional data — but raw transactions don't answer business questions on their own. This project builds the full pipeline from messy, inconsistent raw data to clean structured data to business KPIs to predictive models, the way a real data analytics team would approach it.
+
+## Problem Statement
+
+Using 7 related datasets covering purchases, sales, inventory, and vendor invoices, this project answers:
+- Which vendors and brands drive the most profit — and which underperform?
+- Where is inventory turning slowly or sitting as dead stock?
+- Are purchase volumes aligned with actual sales demand?
+- Can invoice risk/anomaly patterns be identified from billing data?
+- Can future sales and inventory needs be forecasted?
+
+---
+
 ## 📁 Project Structure
 
 ```
@@ -20,13 +35,21 @@ Vendor-Invoice-Intelligence-System/
 │
 ├── notebooks/
 │   ├── 01_data_understanding.ipynb # EDA and dataset profiling
-│   └── 02_data_cleaning.ipynb      # Data cleaning, type fixes, and DB loading
+│   ├── 02_data_cleaning.ipynb      # Data cleaning, type fixes, and DB loading
+│   ├── 03_eda.ipynb                # Exploratory analysis and visual insights (upcoming)
+│   ├── 04_feature_engineering.ipynb
+│   ├── 05_business_kpis.ipynb
+│   ├── 06_ml_sales_prediction.ipynb
+│   ├── 07_ml_inventory_forecasting.ipynb
+│   ├── 08_ml_vendor_performance.ipynb
+│   └── 09_ml_invoice_risk_fraud.ipynb
 │
 ├── src/
 │   └── data/
-│       └── load_data.py            # Utility script for loading raw data
+│       └── load_data.py            # Utility script for loading raw data (future)
 │
-├── dashboard/                      # Visualization dashboard (future)
+├── dashboard/                      # Streamlit dashboard (future)
+├── reports/figures/                # Saved charts and visual outputs (future)
 │
 ├── requirements.txt                # Python dependencies
 └── README.md
@@ -36,15 +59,17 @@ Vendor-Invoice-Intelligence-System/
 
 ## 📊 Datasets
 
-| File | Rows | Description |
-|---|---|---|
-| `begin_inventory.csv` | 206,529 | Opening inventory snapshot (Jan 2024) |
-| `end_inventory.csv` | 224,489 | Closing inventory snapshot (Dec 2024) |
-| `purchase_prices.csv` | 12,261 | Product catalog with vendor purchase prices |
-| `purchases.csv` | 2,372,474 | Line-level purchase transactions from vendors |
-| `sales.csv` | 12,825,363 | Line-level retail sales transactions |
-| `vendor_invoice.csv` | 5,543 | Summary-level vendor invoices with freight and approval data |
-| `vendor_sales_summary.csv` | 10,692 | Aggregated vendor-level sales and profitability metrics |
+Seven related CSV files, joined primarily on `VendorNumber`, `InventoryId`, `Brand`, `Store`, and `PONumber`:
+
+| File | Description |
+|---|---|
+| `begin_inventory.csv` | Inventory levels at the start of the period |
+| `end_inventory.csv` | Inventory levels at the end of the period |
+| `purchase_prices.csv` | Reference pricing and cost data by brand/vendor |
+| `purchases.csv` | Line-item level purchase order transactions |
+| `sales.csv` | Line-item level retail sales transactions (12.8M+ rows) |
+| `vendor_invoice.csv` | Invoice-level vendor billing and freight data |
+| `vendor_sales_summary.csv` | Pre-aggregated reference summary — used only to validate independently-built KPIs, not as a primary data source |
 
 ---
 
@@ -80,18 +105,33 @@ All cleaned data is stored in a SQLite database (`database/vendor_invoice.db`) w
   - `data/processed/` as CSVs
   - `database/vendor_invoice.db` as SQLite tables
 
+### `03_eda.ipynb`
+Ten-section exploratory analysis covering:
+- Purchase vs. Sales overview and overall profitability
+- Top/bottom vendor and brand profitability
+- Dead stock analysis (by unit count and by dollar value tied up)
+- Monthly sales trend and seasonality
+- Price and profit margin distributions (with outlier handling via percentile trimming)
+- Freight cost and Approval Flag behavior across vendors
+- Correlation analysis across core business metrics
+- Consolidated key findings summary with implications for later phases
+
+**Key insight**: A consistent group of premium, slow-moving products (e.g., Ch Haut Brion 10,
+Kilbeggan Irish Whiskey) recurs across brand profitability, dead stock, and margin analyses —
+$3.46M in dead stock value is concentrated in high-price, low-volume items, while 178 products
+show zero recorded sales despite real purchase cost.
+
 ---
+
 
 ## ⚙️ Setup
 
-### 1. Clone the repository
 ```bash
-git clone <repo-url>
+# Clone the repository
+git clone https://github.com/aditibarmaiya-ds/vendor-invoice-intelligence-system.git
 cd Vendor-Invoice-Intelligence-System
-```
 
-### 2. Create and activate virtual environment
-```bash
+# Create and activate a virtual environment
 python -m venv venv
 
 # Windows
@@ -99,30 +139,15 @@ venv\Scripts\activate
 
 # macOS/Linux
 source venv/bin/activate
-```
 
-### 3. Install dependencies
-```bash
+# Install dependencies
 pip install -r requirements.txt
-```
 
-### 4. Run notebooks in order
-Open Jupyter and run the notebooks sequentially:
-```bash
+# Launch Jupyter and run notebooks in order
 jupyter notebook
 ```
 1. `notebooks/01_data_understanding.ipynb`
 2. `notebooks/02_data_cleaning.ipynb`
-
----
-
-## 🔑 Key Findings (Data Understanding)
-
-- **`vendor_invoice`**: 5,169 out of 5,543 invoices (93.3%) have no approval — `Approval` column repurposed as a risk flag
-- **`end_inventory`**: 1,284 rows missing `City` — all belong to Store 46 (TYWARDREATH), filled from `begin_inventory`
-- **`purchase_prices`**: 4 rows with `Volume = "Unknown"` — converted to NaN and dropped
-- **`purchases`**: Max single purchase quantity is 3,816 units — verified as legitimate bulk orders
-- **`sales`**: Largest dataset at 12.8M rows; no missing values
 
 ---
 
@@ -131,23 +156,29 @@ jupyter notebook
 | Tool | Purpose |
 |---|---|
 | Python 3.13 | Core language |
-| pandas | Data loading, cleaning, transformation |
-| sqlite3 | Lightweight relational database |
+| pandas, numpy | Data loading, cleaning, transformation |
+| sqlite3 | Lightweight relational database for large-scale querying |
+| matplotlib | Visualization (upcoming) |
+| scikit-learn | Machine learning models (upcoming) |
+| Streamlit | Interactive dashboard (upcoming) |
 | Jupyter Notebook | Interactive EDA and pipeline |
 
 ---
 
-## 🚧 Roadmap
+## 🚧 Project Status
 
-- [x] Data understanding & profiling
-- [x] Data cleaning & SQLite loading
-- [ ] Feature engineering (payment delays, freight ratios, vendor scores)
-- [ ] Vendor performance analysis & SQL queries
-- [ ] Anomaly detection model
-- [ ] Interactive dashboard
+- [x] **Phase 1 — Data Understanding**: Full schema, dtype, null, and shape profiling across all 7 datasets
+- [x] **Phase 2 — Data Cleaning**: Type fixes, missing value resolution, outlier review, standardization, loaded into SQLite
+- [x] **Phase 3 — Exploratory Data Analysis**: 10-section analysis covering profitability, dead stock, seasonality, pricing, and correlations
+- [ ] **Phase 4 — Feature Engineering**
+- [ ] **Phase 5 — Business KPI Creation**
+- [ ] **Phase 6 — Machine Learning Models** (Sales Prediction, Inventory Forecasting, Vendor Performance, Invoice Risk Detection)
+- [ ] **Phase 7 — Streamlit Dashboard**
+- [ ] **Phase 8 — Documentation**
 
 ---
 
 ## 👤 Author
 
 **Aditi Barmaiya**
+Data Analyst | [LinkedIn](#) | [GitHub](#)
